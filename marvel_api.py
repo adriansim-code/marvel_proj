@@ -50,9 +50,11 @@ if start.lower() == "yes":
                         print("\n Great choice!")
 
                     moreInfo = input(f"\nWant to see more info about {selectedCharacter['name']}?: ").lower()
+                    description = selectedCharacter["description"]
                     match moreInfo:
                         case 'yes':
                             print(f"\n{selectedCharacter['name']}")
+                            print(f"Description: {description}")
                             print("Info: ")
                             print(f"Character ID Number: {selectedCharacter['id']}")
                             print(f"Comic Available: {selectedCharacter['comics']['available']}")
@@ -137,25 +139,45 @@ if start.lower() == "yes":
                                     print(f"\n-{index}. {book['title']}")
                                 
                                 characterInfo = input(f"\nWant more info on {selectedCharacter['name']}? (yes/no): ").lower()
+                                description = selectedCharacter["description"]
 
                                 match characterInfo:
                                     case 'yes':
                                         print(f"\n{selectedCharacter['name']}")
+                                        print(f"Description: {description}")
                                         print("Info: ")
                                         print(f"Charcater ID: {selectedCharacter['id']}")
                                         print(f"Comics Available: {selectedCharacter['comics']['available']}")
                                         print(f"Series Available: {selectedCharacter['series']['available']}")
                                         print(f"Stories Available: {selectedCharacter['stories']['available']}")
                                         print(f"Events Available: {selectedCharacter['events']['available']}")
-                                        break
+
+                                        runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
+                                        if runAgain == 'yes':
+                                            continue
+                                        elif runAgain == 'no':
+                                            break
+                                        else:
+                                            print("Invaild response")
+                                            break
                                     case 'no':
-                                        break
+                                        runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
+                                        if runAgain == 'yes':
+                                            continue
+                                        elif runAgain == 'no':
+                                            break
+                                        else:
+                                            print("Invaild response")
+                                            break
                                     case _:
                                         print("Invalid response")
+                                        
                             case 'no':
                                 characterInfo = input(f"\nWant more info on {selectedCharacter['name']}? (yes/no): ").lower()
+                                description = selectedCharacter["description"]
                                 if characterInfo == 'yes':
                                     print(f"\n{selectedCharacter['name']}")
+                                    print(f"Description: {description}")
                                     print("Info: ")
                                     print(f"Character ID: {selectedCharacter['id']}")
                                     print(f"Comics Available: {selectedCharacter['comics']['available']}")
@@ -165,6 +187,14 @@ if start.lower() == "yes":
                                 
                                 elif characterInfo == 'no':
                                     print(f"\nYou picked {selectedCharacter['name']} ")
+                                    runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
+                                    if runAgain == 'yes':
+                                        continue
+                                    elif runAgain == 'no':
+                                        break
+                                    else:
+                                        print("Invaild response")
+                                        break
                                 else:
                                     print("\nInvald response")    
                             case _:
@@ -213,6 +243,16 @@ if start.lower() == "yes":
                                     print(f"Stories Available: {selectedCharacter['stories']['available']}")
                                     print(f"Events Available: {selectedCharacter['events']['available']}")
                                     break
+
+                                case 'no':
+                                    runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
+                                    if runAgain == 'yes':
+                                        continue
+                                    elif runAgain == 'no':
+                                        break
+                                    else:
+                                        print("Invaild response")
+                                        break
                         
                         
                         case 'no':
@@ -233,11 +273,25 @@ if start.lower() == "yes":
                                     print(f"Series Available: {selectedCharacter['series']['available']}")
                                     print(f"Stories Available: {selectedCharacter['stories']['available']}")
                                     print(f"Events Available: {selectedCharacter['events']['available']}")
-                                    if creator_names:
-                                        print(f"\nCreators who worked on {selectedCharacter['name']}:")
-                                        for name in sorted(creator_names):
-                                            print(f"- {name}")
+                                    
+                                    runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
+                                    if runAgain == 'yes':
+                                        continue
+                                    elif runAgain == 'no':
+                                        break
+                                    else:
+                                        print("Invaild response")
+                                        break
                                     break
+                                case 'no':
+                                    runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
+                                    if runAgain == 'yes':
+                                        continue
+                                    elif runAgain == 'no':
+                                        break
+                                    else:
+                                        print("Invaild response")
+                                        break
                             
                 break
             case "4":
@@ -251,4 +305,4 @@ if start.lower() == "yes":
             case "5":
                 break
 else:
-    print("\nGoodbye")  
+    print("\nGoodbye")   
