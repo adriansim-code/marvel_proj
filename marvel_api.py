@@ -61,11 +61,11 @@ if start.lower() == "yes":
                             print(f"Events Available: {selectedCharacter['events']['available']}")
 
                             comicAppearence = input(f"\nWant to see {selectedCharacter['name']} comic appearences? ").lower()
-                            comics_response = marvel.characters.comics(selectedCharacter['id'], limit=50)
+                            comics_response = marvel.characters.comics(selectedCharacter['id'], limit=100)
                             match comicAppearence:
                                 case 'yes':
                                     print(f"\nHere are {selectedCharacter['name']}'s first 50 comic appearences: ")
-                                    for index, book in enumerate(comics_response['data']['results'][:50], start=1):
+                                    for index, book in enumerate(comics_response['data']['results'][:100], start=1):
                                         print(f"\n-{index}. {book['title']}")
                                     
                                     runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
@@ -73,8 +73,16 @@ if start.lower() == "yes":
                                         continue
                                     else:
                                         break
+                                case 'no':
+                                    runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
+                                    if runAgain == "yes":
+                                        continue
+                                    else:
+                                        break
+
                         case 'no':
                             comicAppearence = input(F"\nWant to look for {selectedCharacter['name']}'s comic appearences? (yes/no): ").lower()
+                            comics_response = marvel.characters.comics(selectedCharacter['id'], limit=100)
                             if comicAppearence == "no":
                                 print(f"\nHere is your character: {selectedCharacter['name']}")
                                 runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
@@ -83,10 +91,10 @@ if start.lower() == "yes":
                                 else:
                                     break
                             elif comicAppearence == "yes":
-                                print(f"\nHere are {selectedCharacter['name']}'s comic appearences: ")
-                                for comic in selectedCharacter['comics']['items']:
-                                    print(f"\n-{comic['name']}")
-                                    print("")
+                                print(f"\nHere are {selectedCharacter['name']}'s first 50 comic appearences: ")
+                                for index, book in enumerate(comics_response['data']['results'][:100], start=1):
+                                    print(f"\n-{index}. {book['title']}")
+
                                 runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
                                 if runAgain == 'yes':
                                     continue
@@ -120,12 +128,12 @@ if start.lower() == "yes":
                         print("\n Great choice!")
                         
                         comicChoice = input("\nWant to see their comic apperences? (yes/no): ").lower()
-                        comics_response = marvel.characters.comics(selectedCharacter['id'], limit=50)
+                        comics_response = marvel.characters.comics(selectedCharacter['id'], limit=100)
 
                         match comicChoice:
                             case 'yes':
                                 print(f"\nHere are {selectedCharacter['name']}'s first 50 comic appearences: ")
-                                for index, book in enumerate(comics_response['data']['results'][:50], start=1):
+                                for index, book in enumerate(comics_response['data']['results'][:100], start=1):
                                     print(f"\n-{index}. {book['title']}")
                                 
                                 characterInfo = input(f"\nWant more info on {selectedCharacter['name']}? (yes/no): ").lower()
@@ -151,6 +159,10 @@ if start.lower() == "yes":
                                     print("Info: ")
                                     print(f"Character ID: {selectedCharacter['id']}")
                                     print(f"Comics Available: {selectedCharacter['comics']['available']}")
+                                    print(f"Series Available: {selectedCharacter['series']['available']}")
+                                    print(f"Stories Available: {selectedCharacter['stories']['available']}")
+                                    print(f"Events Available: {selectedCharacter['events']['available']}")
+                                
                                 elif characterInfo == 'no':
                                     print(f"\nYou picked {selectedCharacter['name']} ")
                                 else:
@@ -170,7 +182,7 @@ if start.lower() == "yes":
                 else:
                     characterId = response["data"]["results"]
                     for index, character in enumerate(characterId, start=1):
-                        print(f"-{index}. {character['name']} ID Number: {characterId[0]['id']}")
+                        print(f"\n-{index}. {character['name']} ID Number: {characterId[0]['id']}")
                         
 
                     choice = int(input("\nPick the character you are looking for by number: "))-1
@@ -179,13 +191,64 @@ if start.lower() == "yes":
                         selectedCharacter = characterId[choice]
                         print(selectedCharacter['name'])
 
-                    comicAppearence = input("\nWant to see their comic apperences? (yes/no): ")
+                    comicAppearence = input("\nWant to see their comic apperences? (yes/no): ").lower()
+                    comics_response = marvel.characters.comics(selectedCharacter['id'], limit=100)
+
                     match comicAppearence:
                         case 'yes':
-                            for index, comic in enumerate(characterId[0]['comics']['items']):
-                                print(f"\n\t{characterId[0]['name']}")
-                                print(f"-{index + 1}. {comic['name']}")
-                                print(f"")
+                            for index, book in enumerate(comics_response['data']['results'][:100], start=1):
+                                print(f"\n-{index}. {book['title']}")
+                            
+                            characterInfo = input(f"\nWant more info on {selectedCharacter['name']}? (yes/no): ").lower()
+                            description = selectedCharacter["description"]
+
+                            match characterInfo:
+                                case 'yes':
+                                    print(f"\n{selectedCharacter['name']}")
+                                    print(f"Description: {description}")
+                                    print("\nInfo: ")
+                                    print(f"Charcater ID: {selectedCharacter['id']}")
+                                    print(f"Comics Available: {selectedCharacter['comics']['available']}")
+                                    print(f"Series Available: {selectedCharacter['series']['available']}")
+                                    print(f"Stories Available: {selectedCharacter['stories']['available']}")
+                                    print(f"Events Available: {selectedCharacter['events']['available']}")
+                                    break
+                        
+                        
+                        case 'no':
+                            characterInfo = input(f"\nWant more info on {selectedCharacter['name']}? (yes/no): ").lower()
+                            description = selectedCharacter["description"]
+                            creator_names = set()
+                            for comic in comics_response["data"]["results"]:
+                                for creator in comic["creators"]["items"]:
+                                    creator_names.add(creator["name"])
+
+                            match characterInfo:
+                                case 'yes':
+                                    print(f"\n{selectedCharacter['name']}")
+                                    print(f"Description: {description}")
+                                    print("\nInfo: ")
+                                    print(f"Charcater ID: {selectedCharacter['id']}")
+                                    print(f"Comics Available: {selectedCharacter['comics']['available']}")
+                                    print(f"Series Available: {selectedCharacter['series']['available']}")
+                                    print(f"Stories Available: {selectedCharacter['stories']['available']}")
+                                    print(f"Events Available: {selectedCharacter['events']['available']}")
+                                    if creator_names:
+                                        print(f"\nCreators who worked on {selectedCharacter['name']}:")
+                                        for name in sorted(creator_names):
+                                            print(f"- {name}")
+                                    break
+                            
                 break
             case "4":
+                 test1 = 'spider-man (peter parker)'
+                 test = characters.all(name= test1)
+                 if test["data"]["results"]:
+                    character_id = test["data"]["results"][0]["id"]
+                    print(f"Character ID for {test1}: {character_id['description']}")
+
+                 break
+            case "5":
                 break
+else:
+    print("\nGoodbye")  
