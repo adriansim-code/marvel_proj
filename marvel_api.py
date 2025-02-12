@@ -19,13 +19,11 @@ if start.lower() == "yes":
         print("\n1. Search character by Specific Name ")
         print("2. Search character by Name Starting With... ")
         print("3. Search for character's ID Number? ")
-        print("4. Search Comic Book by Name ")
-        print("5. Search Comic Book by Year ")
-        print("6. Exit HQ ")
+        print("4. Exit HQ ")
 
         choice = input("\npick your choice: ")
 
-        if choice == "6":
+        if choice == "4":
             print("Exiting...")
             break
 
@@ -294,15 +292,6 @@ if start.lower() == "yes":
                                         break
                             
                 break
-            case "4":
-                 test1 = 'spider-man (peter parker)'
-                 test = characters.all(name= test1)
-                 if test["data"]["results"]:
-                    character_id = test["data"]["results"][0]["id"]
-                    print(f"Character ID for {test1}: {character_id['description']}")
-
-                 break
-            case "5":
-                break
+            
 else:
-    print("\nGoodbye")   
+    print("\nGoodbye")    
