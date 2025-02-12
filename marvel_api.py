@@ -32,54 +32,79 @@ if start.lower() == "yes":
         match choice:
             case "1":
                 nameOfCharacter = input("\nEnter Characters full name: ")
-                response = characters.all(name= nameOfCharacter)
+                response = characters.all(limit = 100, nameStartsWith= nameOfCharacter)
 
                 if not response["data"]["results"]:
                     print("No character with that name")
+                    print("Try again")
+                    continue
                 else:
-                    character = response["data"]["results"]
-                    moreInfo = input(f"\nWant to see more info about {character[0]['name']}?: ")
-                    match moreInfo:
-                        case 'yes'| 'Yes':
-                            print(f"\n{character[0]['name']}")
-                            print("Info: ")
-                            print(f"Character ID Number: {character[0]['id']}")
-                            print(f"Comic Available: {character[0]['comics']['available']}")
+                    heroList = response["data"]["results"]
+                    for index, hero in enumerate(heroList):
+                        print(f"\n {index +1 }. {hero['name']}")
+                    
+                    character = int(input("\nPick your character by number: "))-1
 
-                            comicAppearence = input(f"\nWant to see {character[0]['name']} comic appearences? ")
+                    if character >= 0 < len(heroList):
+                        selectedCharacter = heroList[character]
+                        print("\n Great choice!")
+
+                    moreInfo = input(f"\nWant to see more info about {selectedCharacter['name']}?: ").lower()
+                    match moreInfo:
+                        case 'yes':
+                            print(f"\n{selectedCharacter['name']}")
+                            print("Info: ")
+                            print(f"Character ID Number: {selectedCharacter['id']}")
+                            print(f"Comic Available: {selectedCharacter['comics']['available']}")
+                            print(f"Series Available: {selectedCharacter['series']['available']}")
+                            print(f"Stories Available: {selectedCharacter['stories']['available']}")
+                            print(f"Events Available: {selectedCharacter['events']['available']}")
+
+                            comicAppearence = input(f"\nWant to see {selectedCharacter['name']} comic appearences? ").lower()
+                            comics_response = marvel.characters.comics(selectedCharacter['id'], limit=50)
                             match comicAppearence:
-                                case 'yes' | 'Yes':
-                                    print(f"\nHere are {character[0]['name']} comic appearences: ")
-                                    for comic in character[0]['comics']['items']:
-                                        print(f"\n-{comic['name']}")
-                                        print("")
-                                    runAgain = input("\nWant to exit Marvel HQ? (yes/no): ")
+                                case 'yes':
+                                    print(f"\nHere are {selectedCharacter['name']}'s first 50 comic appearences: ")
+                                    for index, book in enumerate(comics_response['data']['results'][:50], start=1):
+                                        print(f"\n-{index}. {book['title']}")
+                                    
+                                    runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
                                     if runAgain == "yes":
                                         continue
                                     else:
                                         break
-                        case 'no'|'No':
-                            comicAppearence = input(F"\nWant to look for {character[0]['name']}'s comic appearences? (yes/no): ")
+                        case 'no':
+                            comicAppearence = input(F"\nWant to look for {selectedCharacter['name']}'s comic appearences? (yes/no): ").lower()
                             if comicAppearence == "no":
-                                print(f"\nHere is your character: {character[0]['name']}")
-                                runAgain = input("Want to search for another character? (yes/no): ")
+                                print(f"\nHere is your character: {selectedCharacter['name']}")
+                                runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
                                 if runAgain == 'yes':
                                     continue
                                 else:
                                     break
                             elif comicAppearence == "yes":
-                                print(f"\nHere are {character[0]['name']}'s comic appearences: ")
-                                for comic in character[0]['comics']['items']:
+                                print(f"\nHere are {selectedCharacter['name']}'s comic appearences: ")
+                                for comic in selectedCharacter['comics']['items']:
                                     print(f"\n-{comic['name']}")
                                     print("")
-                                break
+                                runAgain = input("\nWould you like to search for another character? (yes/no): ").lower()
+                                if runAgain == 'yes':
+                                    continue
+                                elif runAgain == 'no':
+                                    break
+                                else:
+                                    print("Invaild response")
+                                    break   
+                                
                             else:
+                                print("Invaid response")
                                 break        
                 break
             case "2":
                 
                 nameStartingWith = input("\nEnter character name starting with: ")
-                response = characters.all(nameStartsWith= nameStartingWith)
+                response = characters.all(limit = 100, nameStartsWith= nameStartingWith)
+
                 
                 if not response["data"]["results"]:
                     print("No match found")
@@ -93,29 +118,34 @@ if start.lower() == "yes":
                     if character >= 0 < len(heroList):
                         selectedCharacter = heroList[character]
                         print("\n Great choice!")
-                        print(f"You picked {selectedCharacter['name']}")
                         
-                        comicChoice = input("\nWant to see their comic apperences? (yes/no): ")
-                        
+                        comicChoice = input("\nWant to see their comic apperences? (yes/no): ").lower()
+                        comics_response = marvel.characters.comics(selectedCharacter['id'], limit=50)
+
                         match comicChoice:
                             case 'yes':
-                                print(f"\nHere are {selectedCharacter['name']}'s comic appearences: ")
-                                for book in selectedCharacter['comics']['items']:
-                                    print(f"\n-{book['name']}")
-                                characterInfo = input(f"\nWant more info on {selectedCharacter['name']}? (yes/no): ")
+                                print(f"\nHere are {selectedCharacter['name']}'s first 50 comic appearences: ")
+                                for index, book in enumerate(comics_response['data']['results'][:50], start=1):
+                                    print(f"\n-{index}. {book['title']}")
+                                
+                                characterInfo = input(f"\nWant more info on {selectedCharacter['name']}? (yes/no): ").lower()
+
                                 match characterInfo:
                                     case 'yes':
                                         print(f"\n{selectedCharacter['name']}")
                                         print("Info: ")
                                         print(f"Charcater ID: {selectedCharacter['id']}")
                                         print(f"Comics Available: {selectedCharacter['comics']['available']}")
+                                        print(f"Series Available: {selectedCharacter['series']['available']}")
+                                        print(f"Stories Available: {selectedCharacter['stories']['available']}")
+                                        print(f"Events Available: {selectedCharacter['events']['available']}")
                                         break
                                     case 'no':
                                         break
                                     case _:
                                         print("Invalid response")
                             case 'no':
-                                characterInfo = input(f"\nWant more info on {selectedCharacter['name']}? (yes/no): ")
+                                characterInfo = input(f"\nWant more info on {selectedCharacter['name']}? (yes/no): ").lower()
                                 if characterInfo == 'yes':
                                     print(f"\n{selectedCharacter['name']}")
                                     print("Info: ")
@@ -127,14 +157,35 @@ if start.lower() == "yes":
                                     print("\nInvald response")    
                             case _:
                                 print("bye")        
+                    
                     else:
-                        print("Wrong") 
+                        print("Invalid input ") 
                 break
             case "3":
+                characterId = input("\nEnter character's name: ")
+                response = characters.all(limit = 100, nameStartsWith= characterId)
+
+                if not response["data"]["results"]:
+                    print("No match found")
+                else:
+                    characterId = response["data"]["results"]
+                    for index, character in enumerate(characterId, start=1):
+                        print(f"-{index}. {character['name']} ID Number: {characterId[0]['id']}")
+                        
+
+                    choice = int(input("\nPick the character you are looking for by number: "))-1
+
+                    if choice >= 0 < len(characterId):
+                        selectedCharacter = characterId[choice]
+                        print(selectedCharacter['name'])
+
+                    comicAppearence = input("\nWant to see their comic apperences? (yes/no): ")
+                    match comicAppearence:
+                        case 'yes':
+                            for index, comic in enumerate(characterId[0]['comics']['items']):
+                                print(f"\n\t{characterId[0]['name']}")
+                                print(f"-{index + 1}. {comic['name']}")
+                                print(f"")
                 break
             case "4":
                 break
-            case "5":
-                break
-else:
-    print("\nGoodbye") 
